@@ -1,29 +1,30 @@
-namename: Build
+name: Build
 on: [push, workflow_dispatch]
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.10'
+        
     - name: Install dependencies
       run: |
         sudo apt update
         sudo apt install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev cmake libffi-dev libssl-dev
         pip install --upgrade pip
         pip install buildozer cython
-    - name: Accept Android SDK licenses
-      run: |
-        mkdir -p ~/.android
-        touch ~/.android/repositories.cfg
-        mkdir -p $HOME/.android/sdk/licenses
-        echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > $HOME/.android/sdk/licenses/android-sdk-license
-        echo "d56f5187478351e73993d077c5952136e053d2c1" > $HOME/.android/sdk/licenses/android-sdk-preview-license
+        
     - name: Build with Buildozer
-      run: buildozer android debug
+      run: |
+        # Запускаем сборку. 
+        # Если buildozer попытается скачать SDK, он сделает это в папку проекта, 
+        # что обычно проходит стабильнее в GitHub Actions.
+        buildozer android debug
+        
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
