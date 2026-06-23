@@ -1,4 +1,4 @@
-name: Build
+namename: Build
 on: [push, workflow_dispatch]
 jobs:
   build:
@@ -17,9 +17,11 @@ jobs:
         pip install buildozer cython
     - name: Accept Android SDK licenses
       run: |
-        mkdir -p ~/.android && touch ~/.android/repositories.cfg
-        # Это команда для автоматического принятия лицензий Buildozer
-        echo y | buildozer android debug || true
+        mkdir -p ~/.android
+        touch ~/.android/repositories.cfg
+        mkdir -p $HOME/.android/sdk/licenses
+        echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > $HOME/.android/sdk/licenses/android-sdk-license
+        echo "d56f5187478351e73993d077c5952136e053d2c1" > $HOME/.android/sdk/licenses/android-sdk-preview-license
     - name: Build with Buildozer
       run: buildozer android debug
     - name: Upload APK
