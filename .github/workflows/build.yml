@@ -1,37 +1,15 @@
-name: Build APK
-
-on:
-  push:
-    branches: [ main, основной ]
-  workflow_dispatch:
-
+name: Build
+on: [push, workflow_dispatch]
 jobs:
-  build:
+  android:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Get Date
-      id: get-date
-      run: |
-        echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-
-    - name: Cache Buildozer global directory
-      uses: actions/cache@v3
-      with:
-        path: ~/.buildozer
-        key: buildozer-global-${{ runner.os }}-${{ steps.get-date.outputs.date }}
-
+    - uses: actions/checkout@v4
     - name: Build with Buildozer
-      uses: ArtemGovorov/buildozer-action@v1
+      uses: jackkyle/buildozer-action@v1
       with:
         command: buildozer android debug
-        repository_root: .
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: package
         path: bin/*.apk
